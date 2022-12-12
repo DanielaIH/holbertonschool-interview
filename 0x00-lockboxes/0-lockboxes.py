@@ -23,11 +23,3 @@ def callback(boxes, index):
         if key not in keys:
             keys.append(key)
             callback(boxes, key)
-
-
-"""if __name__ == '__main__':
-    boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
-     [[1], [2], [3], [4], []]
-        [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]
-        [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
-        print(canUnlockAll(boxes))"""
