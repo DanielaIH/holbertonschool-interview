@@ -19,7 +19,10 @@ def canUnlockAll(boxes):
 
 def callback(boxes, index):
     """ recursive function to call itself"""
-    for key in boxes[index]:
-        if key not in keys:
-            keys.append(key)
-            callback(boxes, key)
+    try:
+        for key in boxes[index]:
+            if key not in keys:
+                keys.append(key)
+                callback(boxes, key)
+    except:
+        pass
