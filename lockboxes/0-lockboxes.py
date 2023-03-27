@@ -5,16 +5,28 @@
 def canUnlockAll(boxes):
     """method that determines if all the boxes can be opened"""
     global keys
+    global all_keys
     keys = []
+    all_keys = []
     if boxes:
         callback(boxes, 0)
     else:
         return False
+    all_keys = all_keys_check(boxes)
 
-    if len(boxes) == max(keys) + 1:
-        return True
-    else:
-        return False
+    for i in all_keys:
+        if i not in keys:
+            return False
+    return True
+
+
+def all_keys_check(boxes):
+    if boxes:
+        for i in range(len(boxes)):
+            for j in range(len(boxes[i])):
+                if boxes[i][j] not in all_keys:
+                    all_keys.append(boxes[i][j])
+        return(all_keys)
 
 
 def callback(boxes, index):
