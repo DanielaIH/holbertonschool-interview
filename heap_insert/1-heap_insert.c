@@ -1,101 +1,119 @@
 #include "binary_trees.h"
 
 /**
- * length - length of the binary tree.
- * @root: double pointer to the root.
- * Return: the length of the binary tree.
- */
-int length(heap_t **root)
+* height_tree - measures the height of a binary tree
+* @tree: pointer to the root node of the tree to measure the height
+* Return: height of the tree
+*/
+
+int height_tree(const binary_tree_t *tree)
 {
-	if (!root || !*root)
+	int left_height = 0;
+	int right_height = 0;
+
+	if (tree == NULL)
 		return (0);
 
-	return (length(&((*root)->left)) + length(&((*root)->right)) + 1);
+	left_height = height_tree(tree->left);
+	right_height = height_tree(tree->right);
+
+	if (left_height > right_height)
+		return (left_height + 1);
+	else
+		return (right_height + 1);
 }
 
 /**
- * find_parent - Get the parent node.
- * @root: the root node of the binary tree.
- * @i: the index.
- */
-void find_parent(heap_t **root, int i)
-{
-	int parent = (i - 1) / 2;
+* find_parent - finds the parent node of the next node to be inserted
+* @root: pointer to the root node of the Heap
+* @height: height of the tree
+* Return: pointer to the parent node
+*/
 
-	if (!root || i == 0)
+heap_t *find_parent(heap_t *root, int height)
+{
+	heap_t *parent = root;
+
+	if (root == NULL || height < 2)
+		return (NULL);
+
+	if (height == 2)
+	{
+		if (root->left == NULL || root->right == NULL)
+			return (root);
+		else
+			return (NULL);
+	}
+
+	parent = find_parent(root->left, height - 1);
+	if (parent == NULL)
+		parent = find_parent(root->right, height - 1);
+
+	return (parent);
+}
+
+/**
+* swap_nodes - swaps the values of two nodes
+* @node1: pointer to the first node
+* @node2: pointer to the second node
+*/
+
+void swap_nodes(heap_t *node1, heap_t *node2)
+{
+	int temp;
+
+	if (node1 == NULL || node2 == NULL)
 		return;
 
-	find_parent(root, parent);
-	if (parent > 0 && parent % 2)
-		(*root) = (*root)->left;
-	if (parent > 0 && !(parent % 2))
-		(*root) = (*root)->right;
+	temp = node1->n;
+	node1->n = node2->n;
+	node2->n = temp;
 }
 
 /**
- * swap - swap nodes.
- * @a: a node.
- * @b: b node.
- */
-void swap(int *a, int *b)
-{
-	int temp = *b;
-	*b = *a;
-	*a = temp;
-}
+* heap_insert - inserts a value into a Max Binary Heap
+* @root: double pointer to the root node of the Heap
+* @value: value store in the node to be inserted
+* Return: pointer to the inserted node, or NULL on failure
+*/
 
-
-/**
- * insert_to - insert a new node to the given parent.
- * @parent: the parent node.
- * @node: the node to insert into the binary tree-
- */
-void insert_to(heap_t *parent, heap_t *node)
-{
-	if (!parent || node->n < parent->n)
-		return;
-
-	swap(&parent->n, &node->n);
-	insert_to(node->parent, node);
-
-	while (parent->parent && parent->parent->n < node->parent->n)
-		swap(&parent->parent->n, &node->parent->n);
-}
-
-/**
- * heap_insert - insert a node into the max heap.
- * @root: the root node.
- * @value: the value to insert.
- * Return: the node inserted or null.
- */
 heap_t *heap_insert(heap_t **root, int value)
 {
 	heap_t *new_node = NULL;
-	heap_t *parent = *root;
-	int index = length(root);
+	heap_t *parent = NULL;
+	heap_t *move = *root;
+	int height = height_tree(*root);
 
-	if (!root)
+	if (root == NULL)
 		return (NULL);
-	new_node = malloc(sizeof(heap_t));
-	if (!new_node)
-		return (NULL);
-	new_node->n = value;
-	new_node->parent = NULL;
-	new_node->left = NULL;
-	new_node->right = NULL;
 
-	if (!*root)
+	new_node = binary_tree_node(NULL, value);
+	if (new_node == NULL)
+		return (NULL);
+
+	if (*root == NULL)
+		return (*root = new_node);
+
+	parent = find_parent(*root, height);
+	if (parent == NULL)
 	{
-		*root = new_node;
-		return (new_node);
+		while (move->left != NULL)
+			move = move->left;
+		parent = move;
 	}
 
-	find_parent(&parent, index);
-	new_node->parent = parent;
-	if (!parent->left)
+	if (parent->left == NULL)
 		parent->left = new_node;
 	else
 		parent->right = new_node;
-	insert_to(parent, new_node);
+
+	new_node->parent = parent;
+
+	while (new_node->parent != NULL && new_node->n > new_node->parent->n)
+	{
+		swap_nodes(new_node, new_node->parent);
+		new_node = new_node->parent;
+	}
+
 	return (new_node);
 }
