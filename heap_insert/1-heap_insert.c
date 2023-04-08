@@ -46,7 +46,7 @@ heap_t *heap_insert(heap_t **root, int value)
 		(*root) = (*root)->left;
 	if (len > 0 && !(len % 2))
 		*root = (*root)->right;
-	node->root = *root;
+	node->parent = *root;
 	if (!(*root)->left)
 		(*root)->left = node;
 	else
