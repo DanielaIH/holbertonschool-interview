@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+"""0-minoperations.py"""
+
+
 def minOperations(n):
     """Method that calculates the fewest number of operations to obtain n"""
 
