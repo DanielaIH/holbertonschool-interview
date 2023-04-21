@@ -69,7 +69,7 @@ void stabilize(int grid1[3][3])
 					grid1[i][j + 1]++;
 			}
 		}
-	_print_grid(grid1);
+/*_print_grid(grid1);*/
 	}
 }
 /**
